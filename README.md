@@ -98,7 +98,7 @@ STEP03 = {
 }
 
 step_one = nested_update(STEP01, STEP02)
-step_two = nested_update(STEP02, STEP03)
+step_two = nested_update(step_one, STEP03)
 
 print(json.dumps(step_one, indent=2))
 print(json.dumps(step_two, indent=2))
