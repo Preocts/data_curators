@@ -57,6 +57,87 @@ mydataclass = Example(**dataclass_curator(Example, sample_input))
 ```
 
 ---
+
+## A better `.update()` for nested mappings
+```py
+from datacurators.nested_update import nested_update
+```
+
+Merge two mappings, inluding nested mappings, returning a new result.
+
+This is done by starting with a copy of map1. Key/values that are unique to map2 are added to map1. Key/values that exist in both are updated with map1[key] = map2[key]. Nested mapping structures have the same logic applied, recursively.
+
+**Note:** Collections of mappings, such as a list of dicts, must be handled with your own implemented logic. This is because there is no way to ensure the order in which objects of the list are updated.
+
+```py
+import json
+from datacurators.nested_update import nested_update
+
+STEP01 = {"name": "preocts", "type": {}}
+
+STEP02 = {
+    "name": "Preocts",
+    "type": {
+        "style": "egg",
+        "size": "smol",
+    },
+    "likes": [
+        {"id": 0},
+        {"id": 1},
+    ],
+}
+
+STEP03 = {
+    "type": {
+        "style": "Egg",
+        "shell": "thicc",
+    },
+    "likes": [
+        {"id": 0},
+    ],
+}
+
+step_one = nested_update(STEP01, STEP02)
+step_two = nested_update(STEP02, STEP03)
+
+print(json.dumps(step_one, indent=2))
+print(json.dumps(step_two, indent=2))
+```
+
+### Expected results
+
+```
+{
+  "name": "Preocts",
+  "type": {
+    "style": "egg",
+    "size": "smol"
+  },
+  "likes": [
+    {
+      "id": 0
+    },
+    {
+      "id": 1
+    }
+  ]
+}
+{
+  "name": "Preocts",
+  "type": {
+    "style": "Egg",
+    "size": "smol",
+    "shell": "thicc"
+  },
+  "likes": [
+    {
+      "id": 0
+    }
+  ]
+}
+```
+
+---
 ## Local developer installation
 
 It is **highly** recommended to use a `venv` for installation. Leveraging a `venv` will ensure the installed dependency files will not impact other python projects.
